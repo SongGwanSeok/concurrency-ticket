@@ -131,8 +131,10 @@ class MemberTicketServiceConcurrencyTest {
             for (int i = 0; i < MEMBER_TICKET_COUNT_MAX; i++) {
                 executorService.submit(() -> {
                     try {
-                        memberTicketService.issue(member.getId(), getRandomTicket(tickets).getId());
-                        succeedRequestCount.incrementAndGet();
+                        synchronized (succeedRequestCount) {
+                            memberTicketService.issue(member.getId(), getRandomTicket(tickets).getId());
+                            succeedRequestCount.incrementAndGet();
+                        }
                     } catch (Exception e) {
                         log.error("멤버 티켓 발행 중 오류 발생", e);
                         failRequestCount.incrementAndGet();
