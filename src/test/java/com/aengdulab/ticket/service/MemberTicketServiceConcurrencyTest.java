@@ -155,7 +155,7 @@ class MemberTicketServiceConcurrencyTest {
     }
 
     private int getMemberTicketCount(Member member) {
-        return memberTicketRepository.countByMember(member);
+        return memberTicketRepository.countByMemberId(member.getId());
     }
 
     private Ticket createTicket(String ticketName, long quantity) {

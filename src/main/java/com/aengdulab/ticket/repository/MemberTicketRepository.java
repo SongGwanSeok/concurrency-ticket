@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MemberTicketRepository extends JpaRepository<MemberTicket, Long> {
 
-    int countByMember(Member member);
+    int countByMemberId(Long memberId);
 }
