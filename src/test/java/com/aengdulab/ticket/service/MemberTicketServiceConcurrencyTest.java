@@ -1,6 +1,7 @@
 package com.aengdulab.ticket.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.aengdulab.ticket.domain.Member;
 import com.aengdulab.ticket.domain.Ticket;
@@ -61,10 +62,14 @@ class MemberTicketServiceConcurrencyTest {
             }
         });
 
-        assertThat(getTicketQuantity(ticket)).isZero();
-        for (Member member : members) {
-            assertThat(getMemberTicketCount(member)).isEqualTo(MEMBER_TICKET_COUNT_MAX);
-        }
+        assertAll(
+            () -> assertThat(getTicketQuantity(ticket)).isZero(),
+            () -> {
+                for (Member member : members) {
+                    assertThat(getMemberTicketCount(member)).isEqualTo(MEMBER_TICKET_COUNT_MAX);
+                }
+            }
+        );
     }
 
     @Test
@@ -83,11 +88,15 @@ class MemberTicketServiceConcurrencyTest {
             }
         });
 
-        assertThat(getTicketQuantity(jupiterTicket)).isNotNegative();
-        assertThat(getTicketQuantity(marsTicket)).isNotNegative();
-        for (Member member : members) {
-            assertThat(getMemberTicketCount(member)).isEqualTo(MEMBER_TICKET_COUNT_MAX);
-        }
+        assertAll(
+            () -> assertThat(getTicketQuantity(jupiterTicket) + getTicketQuantity(marsTicket)).isEqualTo(
+                2 * ticketQuantity - memberCount * MEMBER_TICKET_COUNT_MAX),
+            () -> {
+                for (Member member : members) {
+                    assertThat(getMemberTicketCount(member)).isEqualTo(MEMBER_TICKET_COUNT_MAX);
+                }
+            }
+        );
     }
 
     @Test
@@ -104,10 +113,14 @@ class MemberTicketServiceConcurrencyTest {
             }
         });
 
-        assertThat(getTicketQuantity(ticket)).isZero();
-        for (Member member : members) {
-            assertThat(getMemberTicketCount(member)).isLessThanOrEqualTo(MEMBER_TICKET_COUNT_MAX);
-        }
+        assertAll(
+            () -> assertThat(getTicketQuantity(ticket)).isZero(),
+            () -> {
+                for (Member member : members) {
+                    assertThat(getMemberTicketCount(member)).isLessThanOrEqualTo(MEMBER_TICKET_COUNT_MAX);
+                }
+            }
+        );
     }
 
     private void sendMultipleRequests(ExecutorService executorService, List<Member> members, Ticket... tickets) {
@@ -151,7 +164,7 @@ class MemberTicketServiceConcurrencyTest {
 
     private List<Member> createMembers(int memberCount) {
         return IntStream.range(0, memberCount)
-                .mapToObj(sequence -> memberRepository.save(new Member("멤버" + sequence)))
-                .toList();
+            .mapToObj(sequence -> memberRepository.save(new Member("멤버" + sequence)))
+            .toList();
     }
 }
