@@ -6,6 +6,7 @@ import com.aengdulab.ticket.domain.Ticket;
 import com.aengdulab.ticket.repository.MemberRepository;
 import com.aengdulab.ticket.repository.MemberTicketRepository;
 import com.aengdulab.ticket.repository.TicketRepository;
+import com.aengdulab.ticket.service.aop.NamedLock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ public class MemberTicketService {
     private final TicketRepository ticketRepository;
     private final MemberTicketRepository memberTicketRepository;
 
+    @NamedLock(value = "issue")
     @Transactional
     public void issue(long memberId, long ticketId) {
         Member member = getMember(memberId);
@@ -32,12 +34,12 @@ public class MemberTicketService {
 
     private Member getMember(long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("멤버가 존재하지 않습니다."));
+            .orElseThrow(() -> new IllegalArgumentException("멤버가 존재하지 않습니다."));
     }
 
     private Ticket getTicket(long ticketId) {
         return ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new IllegalArgumentException("티켓이 존재하지 않습니다."));
+            .orElseThrow(() -> new IllegalArgumentException("티켓이 존재하지 않습니다."));
     }
 
     private void validateIssuable(Member member) {
