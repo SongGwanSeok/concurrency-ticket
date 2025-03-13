@@ -1,12 +1,12 @@
 package com.aengdulab.ticket.service;
 
+import com.aengdulab.ticket.aop.NamedLock;
 import com.aengdulab.ticket.domain.Member;
 import com.aengdulab.ticket.domain.MemberTicket;
 import com.aengdulab.ticket.domain.Ticket;
 import com.aengdulab.ticket.repository.MemberRepository;
 import com.aengdulab.ticket.repository.MemberTicketRepository;
 import com.aengdulab.ticket.repository.TicketRepository;
-import com.aengdulab.ticket.service.aop.NamedLock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,4 +1,4 @@
-package com.aengdulab.ticket.service.aop;
+package com.aengdulab.ticket.aop;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

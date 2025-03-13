@@ -1,6 +1,6 @@
-package com.aengdulab.ticket.service.aop;
+package com.aengdulab.ticket.aop;
 
-import com.aengdulab.ticket.service.LockService;
+import com.aengdulab.ticket.repository.LockRepository;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -14,12 +14,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class NamedLockAop {
 
-    private final LockService lockService;
+    private final LockRepository lockRepository;
 
-    @Around("@annotation(com.aengdulab.ticket.service.aop.NamedLock)")
+    @Around("@annotation(com.aengdulab.ticket.aop.NamedLock)")
     public Object handleLock(ProceedingJoinPoint joinPoint) throws Throwable {
         String lockKey = joinPoint.getSignature().getName();
-        boolean isLockAcquired = lockService.getLock(lockKey);
+        boolean isLockAcquired = lockRepository.getLock(lockKey);
 
         if (!isLockAcquired) {
             throw new IllegalStateException("락 획득에 실패했습니다 락: " + lockKey);
@@ -28,7 +28,7 @@ public class NamedLockAop {
         try {
             return joinPoint.proceed();
         } finally {
-            lockService.releaseLock(lockKey);
+            lockRepository.releaseLock(lockKey);
         }
     }
 }
