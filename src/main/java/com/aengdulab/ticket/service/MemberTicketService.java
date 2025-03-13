@@ -1,5 +1,6 @@
 package com.aengdulab.ticket.service;
 
+import com.aengdulab.ticket.aop.DistributedLock;
 import com.aengdulab.ticket.domain.Member;
 import com.aengdulab.ticket.domain.MemberTicket;
 import com.aengdulab.ticket.domain.Ticket;
@@ -22,6 +23,7 @@ public class MemberTicketService {
     private final MemberTicketRepository memberTicketRepository;
 
     @Transactional
+    @DistributedLock(key = "#ticketId")
     public void issue(long memberId, long ticketId) {
         Member member = getMember(memberId);
         Ticket ticket = getTicket(ticketId);
@@ -32,12 +34,12 @@ public class MemberTicketService {
 
     private Member getMember(long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("멤버가 존재하지 않습니다."));
+            .orElseThrow(() -> new IllegalArgumentException("멤버가 존재하지 않습니다."));
     }
 
     private Ticket getTicket(long ticketId) {
         return ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new IllegalArgumentException("티켓이 존재하지 않습니다."));
+            .orElseThrow(() -> new IllegalArgumentException("티켓이 존재하지 않습니다."));
     }
 
     private void validateIssuable(Member member) {
